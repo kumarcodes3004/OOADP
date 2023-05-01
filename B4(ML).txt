@@ -1,0 +1,22 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df=pd.read_csv('Iris.csv')
+df.head()
+
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(df[['SepalLengthCm','SepalWidthCm','PetalWidthCm']],df.Species,test_size=0.3)
+md=MultinomialNB()
+md.fit(x_train,y_train)
+
+from sklearn.metrics import accuracy_score,confusion_matrix,precision_score,recall_score,ConfusionMatrixDisplay
+y_pred=md.predict(x_test)
+acc=accuracy_score(y_test,y_pred)
+prec=precision_score(y_test,y_pred,average='micro')
+rec=recall_score(y_test,y_pred,average='micro')
+print("Accuracy is: ",acc,"Precision is: ",prec," Recall is: ",rec)
+
+cm=confusion_matrix(y_test,y_pred)
+cmd=ConfusionMatrixDisplay(cm)
+cmd.plot()

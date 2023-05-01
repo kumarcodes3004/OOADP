@@ -1,0 +1,74 @@
+from sklearn.datasets import load_breast_cancer
+data = load_breast_cancer()
+data.DESCR[:760]  
+
+
+data
+
+data.target_names
+
+data.keys()
+
+data.feature_names
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+df=pd.DataFrame(data.data,columns=data.feature_names)
+
+df.head()
+
+df.describe()
+
+X = data.data  # features
+y = data.target
+
+print(X.shape,y.shape)
+
+from sklearn.model_selection import train_test_split
+# test_size :- int represents the absolute number of test samples.
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=200, random_state=0)
+# printing the value of y_train from begining till 10 index[excluding 10th index]
+print(y_train[:10])
+
+df['label']=data.target
+
+df.tail()
+
+print(X.shape,y.shape)
+
+from sklearn.linear_model import LogisticRegression
+model=LogisticRegression()
+
+# training
+model.fit(X_train, y_train)
+
+# Evaluation
+from sklearn.metrics import accuracy_score
+# Accuracy for test data
+y_pred=model.predict(X_test)
+test_data_accuracy=accuracy_score(y_test,y_pred)
+test_data_accuracy
+
+from sklearn.metrics import confusion_matrix,ConfusionMatrixDisplay,classification_report
+cm=confusion_matrix(y_test,y_pred,labels=model.classes_)
+print(model.classes_)
+print(cm)
+
+cmd=ConfusionMatrixDisplay(cm,display_labels=['malignant','benign'])
+cmd.plot()
+plt.title('confusion matrix')
+
+TP,FN,FP,TN=confusion_matrix(y_test,y_pred,labels=model.classes_).ravel()
+print(TP,FN,FP,TN)
+print(classification_report(y_test,y_pred,digits=3))
+
+from sklearn.metrics import RocCurveDisplay , auc , roc_curve
+fpr, tpr, thresholds = roc_curve(y_test, y_pred)
+roc_auc = auc(fpr, tpr)
+display = RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc)
+display.plot()
+
+print(fpr,tpr,roc_auc)

@@ -1,0 +1,32 @@
+print(model.score(Xs,y))
+
+df=pd.read_csv('titanic.csv')
+df.head()
+df.drop(['Name','SibSp','Parch','Ticket','Cabin','Embarked'],axis=1,inplace=True)
+
+df.Age=df.Age.fillna(df.Age.mean())
+df.head()
+
+from sklearn.preprocessing import LabelEncoder,StandardScaler
+encoder=LabelEncoder()
+df['Sex']=encoder.fit_transform(df['Sex'])
+scaler=StandardScaler()
+df[['Age','Fare']]=scaler.fit_transform(df[['Age','Fare']])
+df.head()
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(df[['Pclass','Sex','Age','Fare']],df['Survived'],test_size=0.2)
+
+from sklearn.naive_bayes import GaussianNB
+md=GaussianNB()
+md.fit(x_train,y_train)
+
+y_pred=md.predict(x_test)
+from sklearn.metrics import confusion_matrix,accuracy_score,f1_score,ConfusionMatrixDisplay
+accr=accuracy_score(y_pred,y_test)
+f1_sc=f1_score(y_pred,y_test)
+print("Accuracy: "+str(accr)+"\nF1-Score: "+str(f1_sc))
+
+cm=confusion_matrix(y_test,y_pred)
+cmd=ConfusionMatrixDisplay(cm)
+cmd.plot()
